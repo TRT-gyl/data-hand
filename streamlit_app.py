@@ -8,7 +8,6 @@ import pagesss.变压器参数导入 as page5
 import pagesss.运行方式导入 as page6
 import pagesss.运行方式数据转置 as page7
 
-
 st.set_page_config(page_title="Data Hand", page_icon="📑", layout="wide")
 
 with st.sidebar:
