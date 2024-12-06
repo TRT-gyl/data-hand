@@ -37,6 +37,10 @@ def show():
         st.write("填充后的第二个表")
         st.dataframe(df2)
 
+        # 保存文件到运行目录
+        with open(os.path.join(".", uploaded_file2), "wb") as f:
+            f.write(uploaded_file2.getbuffer())
+
         # 将填充后的数据追加到第二个文件中
         with pd.ExcelWriter(uploaded_file2.name, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
             df2.to_excel(writer, index=False, startrow=writer.sheets['Sheet1'].max_row, header=False)
