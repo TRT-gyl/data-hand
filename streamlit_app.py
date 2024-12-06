@@ -11,7 +11,7 @@ import pagesss.运行方式数据转置 as page7
 st.set_page_config(page_title="Data Hand", page_icon="📑", layout="wide")
 
 with st.sidebar:
-    selected = option_menu("数据处理", ["主页", 'Settings', '老模板', '新模板'],
+    selected = option_menu("承载力数据处理", ["主页", 'Settings', '老模板', '新模板'],
                            icons=['house', 'gear'], menu_icon="cast", default_index=0)
 
 if selected == '主页':
