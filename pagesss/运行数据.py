@@ -7,7 +7,7 @@ import streamlit as st
 
 def show():
     # Streamlit界面
-    st.title("运行方式数据转置处理工具")
+    st.title("运行数据处理工具")
     col1, col2 = st.columns([1, 1])
     with col1:
         # 上传第一个 Excel 文件
