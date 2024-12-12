@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import tempfile
+import os
 
 # 设置页面布局为 wide 模式
 st.set_page_config(layout="wide")
@@ -47,26 +49,33 @@ def main():
                     for old_col, new_col in zip(old_columns, new_columns):
                         new_df[new_col] = old_df[old_col].copy()
 
-                    # 将更新后的新表写入新的 Excel 文件
-                    output_file = "updated_new_table.xlsx"
-                    # 使用 ExcelWriter 追加数据
-                    with pd.ExcelWriter(output_file, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-                        # 手动计算 startrow，确保从最后一个非空行的下一行开始写入
-                        startrow = writer.sheets['Sheet1'].max_row if writer.sheets['Sheet1'].max_row > 0 else 0
-                        new_df.to_excel(writer, sheet_name='Sheet1', index=False, startrow=startrow, header=False)
+                    # 使用临时文件存储
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_file:
+                        output_file = tmp_file.name
 
-                    st.success(f"更新后的新表已保存到 {output_file}")
-                    df3 = pd.read_excel(output_file, engine='openpyxl')
+                    # 将更新后的新表写入临时文件
+                    new_df.to_excel(output_file, index=False)
+
+                    st.success(f"更新后的新表已保存到临时文件 {output_file}")
+
+                    # 读取临时文件中的数据
+                    df3 = pd.read_excel(output_file)
+
                     # 显示最终的 DataFrame
                     st.write("处理完成的文件内容：")
                     st.dataframe(df3)
+
+                    # 提供下载按钮
                     with open(output_file, "rb") as f:
                         btn = st.download_button(
                             label="下载更新后的新表",
                             data=f,
-                            file_name=output_file,
+                            file_name="updated_new_table.xlsx",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
+
+                    # 删除临时文件
+                    os.remove(output_file)
                 else:
                     st.error("旧表和新表选择的列数必须相同。")
             else:
