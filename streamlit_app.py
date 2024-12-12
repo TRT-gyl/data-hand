@@ -7,6 +7,7 @@ import pagesss.线路参数导入 as page4
 import pagesss.变压器参数导入 as page5
 import pagesss.运行方式导入 as page6
 import pagesss.运行数据 as page7
+import pagesss.test as page8
 
 st.set_page_config(page_title="Data Hand", page_icon="📑", layout="wide")
 
@@ -18,6 +19,7 @@ if selected == '主页':
     st.write("# 承载力数据处理!")
 elif selected == 'Settings':
     st.success('test')
+    page8.main()
 elif selected == '老模板':
     sub_menu_items = ["母线数据处理", "变电站参数处理", "变压器设备参数",'线路参数','变压器参数','运行方式','运行数据']
     selected_sub_menu = st.sidebar.selectbox("选择处理文档种类", sub_menu_items)
