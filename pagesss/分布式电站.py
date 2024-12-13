@@ -1,8 +1,12 @@
-import tempfile
 import os
+import tempfile
 import streamlit as st
 import pandas as pd
 
+# 设置页面布局为 wide 模式
+st.set_page_config(layout="wide")
+
+# 定义 Streamlit 应用程序
 def main():
     st.title("分布式电站台账数据处理")
 
@@ -26,11 +30,12 @@ def main():
     st.write("请上传原始数据表和新模板表：")
     col1, col2 = st.columns([1, 1])
     with col1:
-        old_file = st.file_uploader("上传原始数据表", type=["xlsx", "xls"])
+        old_file = st.file_uploader("上传原始数据表", type=["xlsx", "xls"], key="old_file")
 
     with col2:
-        new_file = st.file_uploader("上传新模板表", type=["xlsx", "xls"])
+        new_file = st.file_uploader("上传新模板表", type=["xlsx", "xls"], key="new_file")
 
+    # 检查是否上传了文件
     if old_file is not None and new_file is not None:
         # 读取 Excel 文件
         old_df = pd.read_excel(old_file)
@@ -72,15 +77,15 @@ def main():
                         new_df[new_col] = old_df[old_col].copy()
 
                     # 替换特定值
-                    new_df['电压等级'] = new_df['电压等级'].replace({
+                    replacement_dict = {
                         '交流380V': '380V',
                         '交流220V': '220V',
                         '交流10kV': '10kV',
                         '交流35kV': '35kV',
                         'AC03802': '380V',
                         'AC02202': '220V',
-                    })
-                    new_df['公共连接点电压等级'] = new_df['公共连接点电压等级'].replace({
+                    }
+                    replacement_dict1 = {
                         '交流380V': '380V',
                         '交流220V': '220V',
                         '交流6kV': '6kV',
@@ -88,7 +93,9 @@ def main():
                         '交流20kV': '20kV',
                         '交流35kV': '35kV',
                         '交流66kV': '66kV'
-                    })
+                    }
+                    new_df['电压等级'] = new_df['电压等级'].replace(replacement_dict)
+                    new_df['公共连接点电压等级'] = new_df['公共连接点电压等级'].replace(replacement_dict1)
 
                     # 检查条件并修改数据
                     new_df.loc[(new_df['电压等级'].notnull()) & (new_df['分布式电站名称'].isnull()), '分布式电站名称'] = fill_value
@@ -101,6 +108,8 @@ def main():
                     # 显示最终的 DataFrame
                     st.write("处理完成的文件内容：")
                     st.dataframe(df3)
+
+                    # 提供下载按钮
                     with open(output_file, "rb") as f:
                         btn = st.download_button(
                             label="下载更新后的新表",
