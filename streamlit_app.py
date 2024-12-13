@@ -22,7 +22,7 @@ if selected == '主页':
     # 清空数据并重新运行
     if st.button("Clear Data and Rerun"):
         st.session_state.data = []
-        st.experimental_rerun()
+        st.rerun()
 
 elif selected == 'Settings':
     st.success('test')
