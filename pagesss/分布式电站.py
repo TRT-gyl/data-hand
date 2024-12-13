@@ -29,10 +29,14 @@ def main():
     st.write("请上传原始数据表和新模板表：")
     col1, col2 = st.columns([1, 1])
     with col1:
-        old_file = st.file_uploader("上传原始数据表", type=["xlsx", "xls"])
+        old_file = st.file_uploader("上传原始数据表", type=["xlsx", "xls"], key="old_file")
 
     with col2:
-        new_file = st.file_uploader("上传新模板表", type=["xlsx", "xls"])
+        new_file = st.file_uploader("上传新模板表", type=["xlsx", "xls"], key="new_file")
+
+    # 初始化会话状态中的数据列表
+    if 'processed_dfs' not in st.session_state:
+        st.session_state.processed_dfs = []
 
     if old_file is not None and new_file is not None:
         # 读取 Excel 文件
@@ -101,22 +105,29 @@ def main():
                     new_df.loc[(new_df['电压等级'].notnull()) & (
                         new_df['分布式电站名称'].isnull()), '分布式电站名称'] = fill_value
 
-                    # 将处理后的 DataFrame 存储在会话状态中
-                    st.session_state.processed_df = new_df
-                    st.success("数据处理完成，请确认后保存。")
+                    # 将处理后的 DataFrame 添加到会话状态的列表中
+                    st.session_state.processed_dfs.append(new_df)
+                    st.success("数据处理完成，已保存到会话状态。")
 
-                # 如果会话状态中有处理后的 DataFrame，显示确认和保存按钮
-                if 'processed_df' in st.session_state:
-                    st.write("处理后的数据：")
-                    st.dataframe(st.session_state.processed_df)
+                # 显示当前会话状态中的所有处理后的数据
+                if st.session_state.processed_dfs:
+                    st.write("已处理的数据：")
+                    for i, df in enumerate(st.session_state.processed_dfs):
+                        st.write(f"处理后的数据 {i + 1}:")
+                        st.dataframe(df)
 
-                    if st.button("确认并保存"):
+                # 保存按钮
+                if st.button("确认并保存"):
+                    if st.session_state.processed_dfs:
+                        # 合并所有处理后的 DataFrame
+                        combined_df = pd.concat(st.session_state.processed_dfs, ignore_index=True)
+
+                        # 将合并后的 DataFrame 写入 Excel 文件
                         output_file = new_file.name
-                        # 将处理后的 DataFrame 写入 Excel 文件
                         with pd.ExcelWriter(output_file, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
                             # 手动计算 startrow，确保从最后一个非空行的下一行开始写入
                             startrow = writer.sheets['Sheet1'].max_row if writer.sheets['Sheet1'].max_row > 0 else 0
-                            st.session_state.processed_df.to_excel(writer, sheet_name='Sheet1', index=False, startrow=startrow, header=False)
+                            combined_df.to_excel(writer, sheet_name='Sheet1', index=False, startrow=startrow, header=False)
 
                         st.success(f"更新后的新表已保存到 {output_file}")
                         with open(output_file, "rb") as f:
@@ -127,8 +138,10 @@ def main():
                                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             )
 
-                        # 清除会话状态中的 processed_df
-                        del st.session_state.processed_df
+                        # 清除会话状态中的 processed_dfs
+                        st.session_state.processed_dfs = []
+                    else:
+                        st.error("没有需要保存的数据。")
 
             else:
                 st.error("原始数据表和新模板表选择的列数必须相同。")
