@@ -8,8 +8,8 @@ import pagesss.变压器参数导入 as page5
 import pagesss.运行方式导入 as page6
 import pagesss.运行数据 as page7
 import pagesss.分布式电站 as page8
-
-# 📑
+ 
+ 
 st.set_page_config(page_title="Data Hand", page_icon="dolphin", layout="wide")
 
 with st.sidebar:
