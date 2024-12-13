@@ -26,8 +26,8 @@ elif selected == 'Settings':
     st.success('test')
 
     if st.button("重启应用"):
-        os.system("python restart_streamlit.py")
-        
+        os.system("python restart.py")
+
 elif selected == '承载力老模板':
     sub_menu_items = ["母线数据处理", "变电站参数处理", "变压器设备参数",'线路参数','变压器参数','运行方式','运行方式数据转置']
     selected_sub_menu = st.sidebar.selectbox("选择处理文档种类", sub_menu_items)
