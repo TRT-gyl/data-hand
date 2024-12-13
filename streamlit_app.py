@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 from streamlit_option_menu import option_menu
 import pagesss.母线数据处理 as page1
 import pagesss.变电站参数导入 as page2
@@ -19,13 +20,14 @@ with st.sidebar:
 
 if selected == '主页':
     st.write("# 台账数据处理!")
-    # 清空数据并重新运行
-    if st.button("Clear Data and Rerun"):
-        st.session_state.data = []
-        st.rerun()
+    
 
 elif selected == 'Settings':
     st.success('test')
+
+    if st.button("重启应用"):
+        os.system("python restart_streamlit.py")
+        
 elif selected == '承载力老模板':
     sub_menu_items = ["母线数据处理", "变电站参数处理", "变压器设备参数",'线路参数','变压器参数','运行方式','运行方式数据转置']
     selected_sub_menu = st.sidebar.selectbox("选择处理文档种类", sub_menu_items)
