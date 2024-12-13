@@ -19,27 +19,11 @@ with st.sidebar:
 
 if selected == '主页':
     st.write("# 台账数据处理!")
-    
-
-    # 初始化会话状态
-    if 'data' not in st.session_state:
+    # 清空数据并重新运行
+    if st.button("Clear Data and Rerun"):
         st.session_state.data = []
+        st.experimental_rerun()
 
-    if 'last_update_time' not in st.session_state:
-        st.session_state.last_update_time = datetime.now()
-
-    # 检查是否超过一天
-    if datetime.now() - st.session_state.last_update_time > timedelta(days=1):
-        st.session_state.data = []  # 清空数据
-        st.session_state.last_update_time = datetime.now()  # 重置时间戳
-
-    # 用户操作
-    if st.button("Add Data"):
-        st.session_state.data.append("New Data")
-        st.session_state.last_update_time = datetime.now()  # 更新时间戳
-
-    # 显示当前数据
-    st.write("Current Data:", st.session_state.data)
 elif selected == 'Settings':
     st.success('test')
 elif selected == '承载力老模板':
