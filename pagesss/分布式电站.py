@@ -10,10 +10,21 @@ st.set_page_config(layout="wide")
 def main():
     st.title("分布式电站台账数据处理")
 
-    # 添加一个按钮，点击后删除所有会话数据
-    if st.button("Delete All Session Data"):
-        st.session_state.clear()  # 清空所有会话数据
-        st.write("All session data has been deleted.")
+    # 检查是否需要重置会话状态
+    if 'reset' not in st.session_state:
+        st.session_state.reset = False
+
+    # 重置按钮
+    if st.button("重置会话状态"):
+        st.session_state.reset = True
+
+    # 如果需要重置，清除所有会话状态
+    if st.session_state.reset:
+        for key in list(st.session_state.keys()):
+            if key != 'reset':  # 保留 reset 标志
+                del st.session_state[key]
+        st.session_state.reset = False
+        st.write("会话状态已重置")
 
     # 上传旧表和新表
     st.write("请上传原始数据表和新模板表：")
