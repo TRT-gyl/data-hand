@@ -10,6 +10,11 @@ st.set_page_config(layout="wide")
 def main():
     st.title("分布式电站台账数据处理")
 
+    # 添加一个按钮，点击后删除所有会话数据
+    if st.button("Delete All Session Data"):
+        st.session_state.clear()  # 清空所有会话数据
+        st.write("All session data has been deleted.")
+
     # 上传旧表和新表
     st.write("请上传原始数据表和新模板表：")
     col1, col2 = st.columns([1, 1])
