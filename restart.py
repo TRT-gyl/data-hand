@@ -9,7 +9,7 @@ def restart_streamlit():
         os.system(f"kill {streamlit_pid}")
         time.sleep(2)  # 等待服务停止
     # 重新启动 Streamlit 服务
-    os.system("streamlit run your_app.py &")
+    os.system("streamlit run streamlit_app.py &")
 
 if __name__ == "__main__":
     restart_streamlit()
